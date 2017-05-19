@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>首页</title>
+	<base th:include="base"></base>
+	<!-- Loading my css -->
+	<link rel="stylesheet" type="text/css" href="../static/css/index.css" th:href="@{/css/index.css}">
+	<!-- Loading my js -->
+	<script src="../static/js/onloadImgs.js" th:src="@{/js/onloadImgs.js}"></script>
+	<script src="../static/js/index.js" th:src="@{/js/index.js}"></script>
+</head>
+<body>
+	
+	<div th:include="topnav"></div>
+	
+	<div class="loading-container">
+		<h2></h2>
+		<div class="progress progress-loadImgs">
+			<div id="loadImg" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">
+				<span>loading...</span>
+			</div>
+		</div>
+	</div>
+	
+	<!-- cover -->
+	<div class="cover-site">
+		<div class="cover-site-inner">
+			<div class="cover-container">
+				<div class="inner cover">
+					<h1 id="cover-heading" class="cover-heading">Hi</h1>
+					<p id="text" class="lead">这是我第一次用bootstrap做的响应式网站，还有很多内容需要优化,有什么意见可以和我联系。</p>
+					<p id="contactBtn" class="lead">
+						<a id="contact" href="tencent://message/?uin=330616153" class="button button-glow button-rounded button-caution">Contact Me</a>
+					</p>
+				</div>
+				<div class="cover-foot">
+					<div class="inner">
+						<p>Designed by<a href="#"> @钱程杰</a>.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- Avgrund -->
+<div id="contact-info" class="avgrund-info avgrund-popup">
+	<p>QQ:330616153</p>
+	<button class="btn btn-warning" onClick="closeAvgrund()">确定</button>
+</div>
+
+</body>
+</html>

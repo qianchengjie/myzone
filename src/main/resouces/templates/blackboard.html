@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>留言板</title>
+	<base th:include="base"></base>
+    <link rel="stylesheet" type="text/css" href="../static/css/wangEditor.min.css" th:href="@{/css/wangEditor.min.css}">
+	<link rel="stylesheet" type="text/css" href="../static/css/blackboard.css" th:href="@{/css/blackboard.css}">
+	<!-- 导入js -->
+    <script src="../static/js/wangEditor.js" th:src="@{/js/wangEditor.js}"></script>
+    <script src="../static/js/plupload.full.min.js" th:src="@{/js/plupload.full.min.js}"></script>
+    <script src="../static/js/zh_CN.js" th:src="@{/js/zh_CN.js}"></script>
+    <script src="../static/js/qiniu.js" th:src="@{/js/qiniu.js}"></script>
+	<script src="../static/js/index-nav.js" th:src="@{/js/blackboard.js}"></script>
+	
+	<script th:if="${right == 0}" th:src="@{/js/blackboard/0.js}"></script>
+	<script th:if="${right == 2}" th:src="@{/js/blackboard/2.js}"></script>
+	<script th:if="${right == 3}" th:src="@{/js/blackboard/3.js}"></script>
+</head>
+<body>
+	<div th:include="topnav"></div>
+	<input id="username" type="hidden" th:if="${session.username!=null}" th:value="${session.username}">
+
+	<!-- 主面板 -->
+	<div class="main">
+		<div class="container">
+			<div class="main-container">
+				<!-- 主头部 -->
+				<div class="main-head" th:if="${currentPage == 1}">
+					<h3 class="animated fadeIn" th:if="${session.username!=null}">既然来了，就说点什么吧！</h3>
+					<h3 class="animated bounce" th:if="${session.username==null}" style="text-align: center;">登录后才能留言哦！</h3>
+					<div th:if="${session.username!=null}" id="leave-message"></div>
+					<div th:if="${session.username!=null}" class="leave-message-foot">
+						<button id="leave-message-btn" class="btn btn-primary">留言</button>
+					</div>
+
+				</div>
+				<div class="floor-content">
+					<!-- 楼层 -->
+					<div class="floor" th:each="floor : ${floors}">
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- 留言 -->
+								<div class="floor-container">
+									<!-- 留言头部 -->
+									<div class="floor-head">
+										<img class="head-sculpture" src="../static/img/1.jpg" th:src="${floor.imgSrc}">
+										<span class="name"  th:text="${floor.username}">张三</span>
+										<!-- <small th:text="${floor.flNum}+'楼'">221楼</small> -->
+										<div th:if="${right == 2 || floor.username == session.username}" class="dropdown tools">
+											<button class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown">
+												<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<li><input type="hidden" th:value="${floor.id}"><a href="javascript:void(0)" class="delete">删除</a></li>
+											</ul>
+										</div>
+									</div>
+									<!-- 留言内容 -->
+									<div class="floor-body">
+										<p th:utext="${floor.content}">它的父元素是视窗（浏览器默认用来展示内容的区域的尺寸，不是html 或body 的尺寸）。</p>
+									</div>
+									<!-- 留言尾部 -->
+									<div class="floor-foot">
+										<input type="hidden" value="-1" th:value="${floor.id}">
+										<p th:text="${floor.time}">2017年4月19日14:54:50</p>
+										<a class="btn-zan" th:value="${floor.id}"><span class="zan glyphicon glyphicon-thumbs-up"></span><span class="zan-count" th:text="${floor.zanCount}">2</span></a>
+										<a class="btn-comment"><span class="comment glyphicon glyphicon-comment"></span><span class="reply-count" th:text="${floor.rpCount}">2</span></a>
+									</div>
+									<!-- 回复层 -->
+									<div class="reply-container">
+										<!-- 回复 -->
+										<div class="replys"></div>
+										<div class="loader-anim">
+											<div class="loader-inner pacman"></div>
+										</div> 
+										<!-- 回复框 -->
+										<div class="reply-frame"  th:if="${session.username==null}"><h4>登录后才可回复哦！</h4></div>
+										<div class="reply-frame"  th:if="${session.username!=null}">
+											<div class="reply-frame-head">回复</div>
+											<!-- 回复文本域 -->
+											<div class="reply-textarea">
+											</div>
+											<div class="reply-frame-foot">
+												<a class="btn btn-primary btn-reply">回复</a>
+												<input type="hidden" th:value="${floor.id}">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="reply-textarea-content">
+					<div id="reply-textarea"></div>
+				</div>
+				<nav class="pagination-nav">
+				  <ul class="pagination">
+				    <li>
+				      <a href="#" th:href = "'blackboard?pageNum='+${currentPage-1}" th:unless = "${currentPage} == 1">
+				        <span >&laquo;</span>
+				      </a>
+				    </li>
+				    <script th:inline="javascript">
+				    	var pageSum = 3;
+				    	pageSum = /*[[${pageSum}]]*/;
+				    	var currentPage =1;
+				    	currentPage = /*[[${currentPage}]]*/;
+				    	if(pageSum >= 1){
+				    		for(var i = 1; i <= pageSum ; i++){
+				    			if( i==currentPage){
+				    				document.write(" <li class='active'><a href='blackboard?pageNum="+i+"'>"+i+"</a></li>");
+				    			}else{
+				    				document.write(" <li><a href='blackboard?pageNum="+i+"'>"+i+"</a></li>");
+				    			}
+				    		}
+				    	}
+				    </script>
+				    <li>
+				      <a href="#" th:href = "'blackboard?pageNum='+${currentPage+1}" th:unless = "${currentPage} == ${pageSum}">
+				        <span>&raquo;</span>
+				      </a>
+				    </li>
+				  </ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+	<div id="toast">
+		<p></p>
+	</div>
+	<input id="username" type="hidden" th:if="${session.username != null}" th:value="${session.username}">
+</body>
+</html>

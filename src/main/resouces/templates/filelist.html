@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>filelist.html</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+
+  </head>
+  
+  <body>
+  	<h4 th:text="${currentFolder}"></h4>
+  	<ul id="folders">
+  		<li th:each="folder : ${folderList}" th:utext="'<span>文件夹：'+${folder}+'</span>'"></li>
+  	</ul>
+  	<ul id="files" th:each="file : ${fileList}">
+  		<li th:utext="'<span>文件：'+${file.key}+'</span><button>下载</button>'"></li>
+  	</ul>
+  	<ul id="files" th:if="${fileList}!=null">
+  	</ul>
+  	<ul id="file-info">
+  	</ul>
+	<script type="text/javascript" src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+	<script>
+		$(document).ready(function(){
+			$('#files').on('click','span',function(){
+				choose(this);
+			})
+			$('#folders').on('click','span',function(){
+				choose(this);
+			})
+			$('#files').on('click','.download',function(){
+				download(this);
+			})
+			$('#files').on('click','.delete',function(){
+				deleteFile(this);
+			})
+		})
+		//选择目录
+		function choose(obj){
+			$('#file-info').html('');
+			
+			var name = $(obj).text().substring( $(obj).text().indexOf("：")+1, $(obj).text().length );
+			
+			
+			//打开文件夹
+			if($(obj).text().indexOf('文件夹' ) != -1 || name == '..'){
+			
+				if(name == '..')
+					name = $('h4').text().substring(0,$('h4').text().lastIndexOf('/'));
+				else if(!$('h4').text()=='')
+					name = $('h4').text()+'/'+name
+				$('h4').text(name)
+				$.ajax({
+					url : 'getFileList',
+					method : 'post',
+					data : {prefix : name},
+					success : function(data){
+						var obj = JSON.parse(data)
+						$('#folders').html('')
+						if($('h4').text() != '')
+							$('#folders').append('<li><span>..</span></li>')
+						//文件夹
+						for(var i = 0; i < obj.folderList.length; i++)
+							$('#folders').append('<li><span>文件夹：'+obj.folderList[i]+'</span></li>')
+						//文件
+						$('#files').html('')
+						for(var i =0 ; i < obj.fileList.length; i++)
+							$('#files').append('<li><span>文件：'+obj.fileList[i].key+"</span><button class='download'>下载</button><button class='delete'>删除</button></li>")
+					}
+				})
+			}
+			//查看文件信息
+			else{
+				var key = name;
+				if($('h4').text()!='')
+					key = $('h4').text()+'/'+name;
+				$.ajax({
+					url : 'getFileInfo',
+					method : 'post',
+					data : {key : key},
+					success : function(data){
+						var obj = JSON.parse(data)
+						$('#file-info').append('<li><span>文件路径：'+obj.key+'</span></li>')
+						$('#file-info').append('<li><span>文件大小：'+obj.fsize+'</span></li>')
+						$('#file-info').append('<li><span>文件类型：'+obj.mimeType+'</span></li>')
+					}
+				})
+			}
+			
+		}
+		
+		//下载文件
+		function download(Bobj) {
+			var obj =  $(Bobj).siblings('span');
+			var name = $(obj).text().substring( $(obj).text().indexOf("：")+1, $(obj).text().length );
+			
+			$.ajax({
+					url : 'download',
+					method : 'post',
+					data : {prefix : $('h4').text(),fileName : name},
+					success : function(url){
+			          	var iframe = document.createElement("iframe");
+			           	document.body.appendChild(iframe);
+			            // alert(download_file.iframe);
+			            iframe.src = url;
+			            iframe.style.display = "none";
+					}
+			})
+         }
+         //删除文件
+         function deleteFile(Bobj){
+	        var obj =  $(Bobj).siblings('span');
+			var name = $(obj).text().substring( $(obj).text().indexOf("：")+1, $(obj).text().length );
+			
+			var key = name;
+			if($('h4').text()!='')
+				key = $('h4').text()+'/'+name;
+			
+			$.ajax({
+					url : 'delete',
+					method : 'post',
+					data : {key : key},
+					success : function(msg){
+						alert(msg)
+					}
+			})
+         }
+	</script>
+  </body>
+</html>

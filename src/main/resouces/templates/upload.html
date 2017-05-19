@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>uploadl.html</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+  </head>
+  
+  <body>
+    <form th:action="@{file/doUpload}" th:object="${fileInfo}" method="post" enctype="multipart/form-data" onsubmit="return check()">
+    	文件名<input type="text" name="fileName">
+    	文件保存路径<input type="text" name="filePath">
+    	文件<input type="file" name="file">
+    	<input type="submit">
+    </form>
+  </body>
+</html>

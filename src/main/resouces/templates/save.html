@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>foodupload.html</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+  </head>
+  
+  <body>
+  	<form th:action="@{saveFood}" th:object="${food}" method="post">
+  		标题<input type="text" name="name" /><br />
+  		内容<input type="text" name="content" />
+  		<input type="submit">
+  	</form>
+  	<br />
+  	<br />
+  	<br />
+  	<br />
+  	<br />
+  	<br />
+  	<form th:action="@{saveFoodImage}" th:object="${foodImage}" method="post">
+  		图片URL<input type="text" name="url" value="http://optpqehds.bkt.clouddn.com/bc/images/food/" style="width:400px"/><br />
+  		食物名称<input type="text" name="foodName" />
+  		<input type="submit">
+  	</form>
+  </body>
+</html>

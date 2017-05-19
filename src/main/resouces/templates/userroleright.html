@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>用户权限表</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+  </head>
+  
+  <body>
+    	<table border="1" cellspacing="0" cellpadding="0" >
+    		<tr>
+    			<td>用户名</td>
+    			<td>用户角色</td>
+    			<td colspan="3">用户权限</td>
+    		</tr>
+    		<tr th:each="uRR : ${uRRList}">
+    			<td th:text="${uRR.username}"></td>
+    			<td th:text="${uRR.rolename}"></td>
+    			<td th:text="${uRR.rightnamelist}"></td>
+    		</tr>
+    	</table>
+  </body>
+</html>
